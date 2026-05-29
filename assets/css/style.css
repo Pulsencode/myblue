@@ -49,10 +49,13 @@ a {
     right: 0;
     z-index: 200;
     padding: 0 24px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
     transition: background 0.3s, box-shadow 0.3s;
 }
 
-.site-header.is-scrolled {
+.site-header.is-scrolled,
+.site-header.menu-open {
     background: var(--color-primary);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
@@ -98,11 +101,29 @@ a {
 .nav-toggle {
     display: none;
     flex-direction: column;
+    justify-content: center;
     gap: 5px;
+    width: 44px;
+    height: 44px;
     padding: 8px;
     background: transparent;
     border: none;
     cursor: pointer;
+    z-index: 201;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--header-height);
+    background: rgba(15, 26, 46, 0.45);
+    z-index: 198;
+}
+
+body.nav-open .nav-backdrop {
+    display: block;
 }
 
 .nav-toggle span {
@@ -602,46 +623,138 @@ a {
     font-size: 0.9rem;
 }
 
+.footer-credit {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-credit a {
+    color: #93c5fd;
+}
+
 /* Mobile */
 @media (max-width: 720px) {
+    :root {
+        --header-height: 56px;
+    }
+
+    body.nav-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    .site-header {
+        background: var(--color-primary);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    }
+
     .nav-toggle {
         display: flex;
     }
 
     .nav {
         position: relative;
+        z-index: 201;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+        z-index: 201;
     }
 
     .nav-menu {
         display: none;
-        position: absolute;
+        position: fixed;
         top: var(--header-height);
-        left: -24px;
-        right: -24px;
+        left: 0;
+        right: 0;
         flex-direction: column;
-        padding: 12px 24px 20px;
+        gap: 4px;
+        margin: 0;
+        padding: 12px 16px 24px;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
         background: var(--color-primary);
         border-top: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        z-index: 200;
+        max-height: calc(100dvh - var(--header-height));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .site-header.is-scrolled .nav-menu,
     .nav-menu.is-open {
         display: flex;
     }
 
+    .nav-menu a {
+        padding: 14px 16px;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+
+    .nav-menu a.is-active {
+        background: rgba(255, 255, 255, 0.22);
+    }
+
+    .page-section {
+        padding: 48px 16px;
+    }
+
+    .hero-carousel__content {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .hero-carousel__content h1 {
+        font-size: clamp(2rem, 10vw, 2.75rem);
+    }
+
+    .hero-carousel__content > p {
+        font-size: 1rem;
+    }
+
+    .hero-carousel__dots {
+        bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .shop-intro {
+        padding: 40px 16px 20px;
+    }
+
     .shop-nav {
+        top: var(--header-height);
+        padding: 12px 16px;
         justify-content: flex-start;
         overflow-x: auto;
         flex-wrap: nowrap;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .shop-nav::-webkit-scrollbar {
+        display: none;
     }
 
     .shop-nav a {
         flex-shrink: 0;
+        padding: 10px 14px;
+    }
+
+    .shop-grid {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .shop-card {
+        scroll-margin-top: calc(var(--header-height) + 52px);
     }
 
     .hero-carousel__actions .btn,
-    .contact-actions .btn {
+    .contact-actions .btn,
+    .shop-intro__actions .btn {
         width: 100%;
         min-width: 0;
     }
@@ -655,16 +768,19 @@ a {
         grid-column: auto;
     }
 
-    .shop-grid {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
     .shop-card__tables {
         grid-template-columns: 1fr;
     }
 
+    .mission-list li {
+        padding: 16px;
+    }
+
     .map-wrap iframe {
-        height: 320px;
+        height: 280px;
+    }
+
+    .site-footer {
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
     }
 }
